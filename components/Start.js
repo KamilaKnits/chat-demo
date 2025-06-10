@@ -51,7 +51,7 @@ const Start = ({ navigation }) => {
         <View >
           <TouchableOpacity
             style={styles.chatButton}
-            onPress={() => navigation.navigate('Chat', { name: name })}
+            onPress={() => navigation.navigate('Chat', { name: name } )}
           >
             <Text style={styles.chatButtonText}>Start Chatting</Text>
 
@@ -93,7 +93,7 @@ const styles = StyleSheet.create({
     fontWeight: "300",
     color: "#757803",
     opacity: 1,
-    width: "80%",
+    width: "88%",
     padding: 15,
     borderWidth: 1,
     marginTop: 15,
@@ -134,6 +134,7 @@ const styles = StyleSheet.create({
     width: "88%",
     borderWidth: 1,
     marginBottom: 15,
+    marginTop: 15
   },
 
   chatButtonText: {

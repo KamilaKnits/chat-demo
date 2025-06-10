@@ -3,14 +3,14 @@ import { StyleSheet, View, Text } from "react-native";
 
 const Chat = ({ route, navigation }) => {
     const { name } = route.params;
-    const { color} = route.params.backgoundColor;
+    const  {backgroundColor} = route.params.backgoundColor;
 
     useEffect(() => {
-        navigation.setOptions({ title: name }, { backgroundColor: color });
+        navigation.setOptions({ title: name });
     }, []);
 
     return (
-        <View style={styles.container} >
+        <View style={[styles.container, {backgroundColor: backgroundColor}]} >
             <Text>Let's Chat!</Text>
         </View>
     );
