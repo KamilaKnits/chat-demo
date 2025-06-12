@@ -17,10 +17,10 @@ const Start = ({ navigation }) => {
 
       <View style={styles.container}>
 
-        <View>
+        <View >
+          <Img source={require("../assets/icon.svg")} ></Img>
           <TextInput
             style={styles.textInput}
-            source={require("../assets/icon.svg")}
             value={name}
             onChangeText={setName}
             placeholder="Your Name">
