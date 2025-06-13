@@ -18,7 +18,7 @@ const Start = ({ navigation }) => {
       <View style={styles.container}>
 
         <View >
-          <Img source={require("../assets/icon.svg")} ></Img>
+          {/* <Img source={require("../assets/icon.svg")} ></Img> */}
           <TextInput
             style={styles.textInput}
             value={name}
@@ -97,7 +97,7 @@ const styles = StyleSheet.create({
     fontWeight: "300",
     color: "#757803",
     opacity: 1,
-    width: "88%",
+    width: "300",
     padding: 15,
     borderWidth: 1,
     marginTop: 15,
@@ -135,7 +135,7 @@ const styles = StyleSheet.create({
   chatButton: {
     padding: 15,
     backgroundColor: "#757083",
-    width: "88%",
+    width: "300",
     borderWidth: 1,
     marginBottom: 15,
     marginTop: 15
