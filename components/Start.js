@@ -1,5 +1,15 @@
 import { useState } from 'react';
-import { StyleSheet, Text, View, Button, TextInput, ImageBackground, TouchableOpacity } from 'react-native';
+import {
+  StyleSheet,
+  Text,
+  View,
+  Button,
+  TextInput,
+  ImageBackground,
+  TouchableOpacity,
+  KeyboardAvoidingView,
+  Platform
+} from 'react-native';
 
 
 const Start = ({ navigation }) => {
@@ -16,7 +26,8 @@ const Start = ({ navigation }) => {
       <Text style={styles.title}>Chat App</Text>
 
       <View style={styles.container}>
-
+         {/* main container of the page holding the TextInput, color background
+         and start chatting button */}
         <View >
           {/* <Img source={require("../assets/icon.svg")} ></Img> */}
           <TextInput
@@ -28,9 +39,13 @@ const Start = ({ navigation }) => {
         </View>
 
         <View style={styles.colorContainer}>
+          {/* this container holds the color buttons to select background color of chat screen */}
+          
           <Text style={styles.colorText}>Choose your Background Color:</Text>
           <View style={styles.colorButtonsContainer}>
             {ColorOptions.map((color) => (
+            
+             
               <TouchableOpacity
                 key={`color-button__${color}`}
                 title="Go to Chat"
@@ -49,19 +64,23 @@ const Start = ({ navigation }) => {
         </View>
 
         <View >
+         {/* touchableOpacity is used instead of button; much easier to customize */}
           <TouchableOpacity
             style={styles.chatButton}
-            onPress={() => navigation.navigate('Chat', { 
-              name: name, 
-              backgroundColor: selectedColor 
+            onPress={() => navigation.navigate('Chat', {
+              name: name,
+              backgroundColor: selectedColor
             })
-          }
+            }
           >
             <Text style={styles.chatButtonText}>Start Chatting</Text>
 
           </TouchableOpacity>
         </View>
-
+         {/* stops the keyboard from obstructing view input field as you type */}  
+        {Platform.OS === 'android' ? <KeyboardAvoidingView behavior="height" /> : null}
+        {Platform.OS === 'ios' ? <KeyboardAvoidingView behavior="padding" /> : null}
+      
       </View>
 
     </ImageBackground>
