@@ -8,14 +8,35 @@ import {
   ImageBackground,
   TouchableOpacity,
   KeyboardAvoidingView,
-  Platform
+  Platform,
+  Alert
 } from 'react-native';
+
+import { getAuth, signInAnonymously } from "firebase/auth";
 
 
 const Start = ({ navigation }) => {
+  const auth = getAuth();
+
   const [name, setName] = useState("");
   const [selectedColor, setSelectedColor] = useState();
   const ColorOptions = ['#090C08', '#474056', '#8A95A5', '#B9C6AE']
+
+  const signInUser = () => {
+    signInAnonymously(auth)
+      .then(result => {
+        navigation.navigate("Chat",
+          {
+            userID: result.user.uid,
+            backgroundColor: selectedColor,
+            name: name
+          });
+        Alert.alert("Signed in successfully!");
+      }).catch((error) => {
+        Alert.alert("Unable to sign in, try again later.");
+      })
+  }
+
 
   return (
     <ImageBackground
@@ -26,7 +47,7 @@ const Start = ({ navigation }) => {
       <Text style={styles.title}>Chat App</Text>
 
       <View style={styles.container}>
-         {/* main container of the page holding the TextInput, color background
+        {/* main container of the page holding the TextInput, color background
          and start chatting button */}
         <View >
           {/* <Img source={require("../assets/icon.svg")} ></Img> */}
@@ -40,12 +61,12 @@ const Start = ({ navigation }) => {
 
         <View style={styles.colorContainer}>
           {/* this container holds the color buttons to select background color of chat screen */}
-          
+
           <Text style={styles.colorText}>Choose your Background Color:</Text>
           <View style={styles.colorButtonsContainer}>
             {ColorOptions.map((color) => (
-            
-             
+
+
               <TouchableOpacity
                 key={`color-button__${color}`}
                 title="Go to Chat"
@@ -64,23 +85,18 @@ const Start = ({ navigation }) => {
         </View>
 
         <View >
-         {/* touchableOpacity is used instead of button; much easier to customize */}
+          {/* touchableOpacity is used instead of button; much easier to customize */}
           <TouchableOpacity
             style={styles.chatButton}
-            onPress={() => navigation.navigate('Chat', {
-              name: name,
-              backgroundColor: selectedColor
-            })
-            }
+            onPress={signInUser}
           >
             <Text style={styles.chatButtonText}>Start Chatting</Text>
-
           </TouchableOpacity>
         </View>
-         {/* stops the keyboard from obstructing view input field as you type */}  
+        {/* stops the keyboard from obstructing view input field as you type */}
         {Platform.OS === 'android' ? <KeyboardAvoidingView behavior="height" /> : null}
         {Platform.OS === 'ios' ? <KeyboardAvoidingView behavior="padding" /> : null}
-      
+
       </View>
 
     </ImageBackground>
