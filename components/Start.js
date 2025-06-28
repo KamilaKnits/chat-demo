@@ -16,12 +16,12 @@ import { getAuth, signInAnonymously } from "firebase/auth";
 
 
 const Start = ({ navigation }) => {
-  const auth = getAuth();
-
   const [name, setName] = useState("");
   const [selectedColor, setSelectedColor] = useState();
   const ColorOptions = ['#090C08', '#474056', '#8A95A5', '#B9C6AE']
 
+  const auth = getAuth();
+  
   const signInUser = () => {
     signInAnonymously(auth)
       .then(result => {

@@ -2,19 +2,37 @@ import { StyleSheet, Text, View, } from 'react-native';
 //import the screens
 import Start from './components/Start';
 import Chat from './components/Chat';
+
+import { useNetInfo } from '@react-native-community/netinfo';
+import { useEffect  } from 'react';
+import { LogBox, Alert } from 'react-native';
+
+LogBox.ignoreLogs(["AsyncStorage has been extracted from"]);
+
 //import react Navigation
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
+ //app's main chat component that renders the chat UI
 const Stack = createNativeStackNavigator();
- //app's amin chat component that renders the chat UI
 
  //firebase setup
 import { initializeApp } from 'firebase/app';
-import { getFirestore } from 'firebase/firestore';
+import { getFirestore, disableNetwork, enableNetwork } from 'firebase/firestore';
 
 
 const App = () => {
+  const connectionStatus = useNetInfo();
+
+  useEffect(() => {
+    if (connectionStatus.isConnected === false) { 
+      Alert.alert("connection lost!");
+      disableNetwork(db);
+    } else if (connectionStatus.isConnected === true) {
+      enableNetwork(db);
+    }
+  }, [connectionStatus.isConnected]);
+
   const firebaseConfig = {
     apiKey: "AIzaSyC1DXBK-kMlbBl2lzh2xkvugtOq644Oo_0",
     authDomain: "chat-demo-f9769.firebaseapp.com",
@@ -41,7 +59,7 @@ const db = getFirestore(app);
         <Stack.Screen
         name="Chat"
         >
-        {props => <Chat db={db} {...props} />}
+        {props => <Chat isConnected={connectionStatus.isConnected} db={db} {...props} />}
         </Stack.Screen>
         
       </Stack.Navigator>
