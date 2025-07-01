@@ -19,8 +19,8 @@ const Chat = ({ route, navigation, db, isConnected }) => {
         if (isConnected === true) {
             //unregister current onSnapshot() listener to avoid registering multiple 
             //listeners when useEffect code is re-executed.
-            if (unsubShoppinglists) unsubShoppinglists();
-            unsubShoppinglists = null;
+            if (unsubMessages) unsubMessages();
+            unsubMessages = null;
 
             const q = query(collection(db, "messages"), orderBy("createAt", "desc"));
             unsubMessages = onSnapshot(q, (docs) => {
