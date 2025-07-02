@@ -22,12 +22,12 @@ const Chat = ({ route, navigation, db, isConnected }) => {
             if (unsubMessages) unsubMessages();
             unsubMessages = null;
 
-            const q = query(collection(db, "messages"), orderBy("createAt", "desc"));
+            const q = query(collection(db, "messages"), orderBy("createdAt", "desc"));
             unsubMessages = onSnapshot(q, (docs) => {
                 let newMessages = [];
                 docs.forEach(doc => {
                     newMessages.push({
-                        id: doc.id,
+                        _id: doc.id,
                         ...doc.data(),
                         createdAt: new Date(doc.data().createdAt.toMillis())
                     })
@@ -45,9 +45,15 @@ const Chat = ({ route, navigation, db, isConnected }) => {
     }, [isConnected]);
 
     const loadCachedMessages = async () => {
-        const cachedMessages = await AsyncStorage.getItem("messages") || [];
-        setMessages(JSON.parse(cachedMessages));
-    }
+		try {
+			const cachedMessages = await AsyncStorage.getItem('messages');
+			if (cachedMessages) {
+				setMessages(JSON.parse(cachedMessages));
+			}
+		} catch (error) {
+			console.error('Failed to load messages from AsyncStorage', error);
+		}
+	};
 
     const cacheMessages = async (messagesToCache) => {
         try {
@@ -57,8 +63,15 @@ const Chat = ({ route, navigation, db, isConnected }) => {
         }
     }
 
-    const onSend = (newMessages) => {
-        addDoc(collection(db, "messages"), newMessages[0])
+    const onSend = async (newMessages) => {
+        console.log('onSend in Chat.js called with:', newMessages);
+        try {
+            await addDoc(collection(db, "messages"), newMessages[0]);
+        console.log("Message sent to Firestore successfully");
+        } catch (error) {
+            console.error('Error sending message to Firestor:e', error);
+            //displays error message to the user
+        }  
     }
 
     const renderInputToolbar = (props) => {
@@ -70,18 +83,17 @@ const Chat = ({ route, navigation, db, isConnected }) => {
     //creates a speech bubble for sender's messages in black and receivers in white
     const renderBubble = (props) => {
         return <Bubble
-            {...props}
-            wrapperStyle={{
-                right: {
-                    backgroundColor: "#000"
-                },
-                left: {
-                    backgroundColor: "#FFF"
-                }
-            }}
-        >
-        </Bubble>
-    }
+          {...props}
+          wrapperStyle={{
+            right: {
+              backgroundColor: "#000"
+            },
+            left: {
+              backgroundColor: "#FFF"
+            }
+          }}
+        />
+      }
 
     return (
         <View style={[styles.container, { backgroundColor }]}>
@@ -91,16 +103,15 @@ const Chat = ({ route, navigation, db, isConnected }) => {
                 renderInputToolbar={renderInputToolbar}
                 onSend={messages => onSend(messages)}
                 user={{
-                    uid: userID,
-                    name: name
+                    _id: userID,
+                    name
                 }}
             />
             {/* stops the keyboard from obstructing view input field as you type */}
-            {Platform.OS === 'android' ? <KeyboardAvoidingView behavior="height" /> : null}
+            
             {Platform.OS === 'ios' ? <KeyboardAvoidingView behavior="padding" /> : null}
         </View>
     )
-
 }
 
 const styles = StyleSheet.create({
