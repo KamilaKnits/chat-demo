@@ -95,7 +95,7 @@ const Start = ({ navigation }) => {
         </View>
         {/* stops the keyboard from obstructing view input field as you type */}
         {Platform.OS === 'android' ? <KeyboardAvoidingView behavior="height" /> : null}
-            {Platform.OS === 'ios' ? <KeyboardAvoidingView behavior="padding" /> : null}
+        {Platform.OS === 'ios' ? <KeyboardAvoidingView behavior="padding" /> : null}
 
       </View>
 

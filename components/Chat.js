@@ -3,17 +3,18 @@ import { StyleSheet, View, KeyboardAvoidingView, Platform } from 'react-native';
 import { Bubble, GiftedChat, InputToolbar } from 'react-native-gifted-chat';
 import { addDoc, collection, onSnapshot, query, orderBy } from 'firebase/firestore';
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import CustomActions from './CustomActions';
+import MapView from 'react-native-maps';
+import CustomActions from './CustomActions.js';
 
 
-const Chat = ({ route, navigation, db, isConnected }) => {
+const Chat = ({ route, navigation, db, isConnected, storage }) => {
     const { name, backgroundColor, userID } = route.params;
     const [messages, setMessages] = useState([]);
 
     let unsubMessages;
 
     useEffect(() => {
-        
+
         //sets the navigation bar to the user's name
         navigation.setOptions({ title: name });
         //code to execute when component mounted or updated
@@ -27,7 +28,8 @@ const Chat = ({ route, navigation, db, isConnected }) => {
             unsubMessages = onSnapshot(q, (docs) => {
                 let newMessages = [];
                 docs.forEach(doc => {
-                    newMessages.push({
+                    newMessages.push(
+                        {
                         _id: doc.id,
                         ...doc.data(),
                         createdAt: new Date(doc.data().createdAt.toMillis())
@@ -65,12 +67,12 @@ const Chat = ({ route, navigation, db, isConnected }) => {
     }
 
     const onSend = async (newMessages) => {
-        console.log('onSend in Chat.js called with:', newMessages);
+        
         try {
             await addDoc(collection(db, "messages"), newMessages[0]);
         console.log("Message sent to Firestore successfully");
         } catch (error) {
-            console.error('Error sending message to Firestor:e', error);
+            console.error('Error sending message to Firestore', error);
             //displays error message to the user
         }  
     }
@@ -97,8 +99,31 @@ const Chat = ({ route, navigation, db, isConnected }) => {
       }
 
       const renderCustomActions = (props) => {
-        return <CustomActions {...props} />;
+        return <CustomActions userID={userID} storage={storage} {...props} />;
       };
+
+      const renderCustomView = (props) => {
+        const { currentMessage } = props;
+        if (currentMessage.location) {
+            return(
+                <MapView
+                style={{width: 150,
+                    height: 100,
+                    borderRadius: 13,
+                    margin: 3
+                }}
+                region={{
+                    latitude: currentMessage.location.latitude,
+                    longitude: currentMessage.location.longitude,
+                    latitudeDelta: 0.0922,
+                    longitudeDelta: 0.0421,
+                }}
+                >
+                </MapView>
+            );
+        }
+        return null;
+      }
 
     return (
         <View style={[styles.container, { backgroundColor }]}>
@@ -106,8 +131,9 @@ const Chat = ({ route, navigation, db, isConnected }) => {
                 messages={messages}
                 renderBubble={renderBubble}
                 renderInputToolbar={renderInputToolbar}
-                renderActions={renderCustomActions}
                 onSend={messages => onSend(messages)}
+                renderActions={renderCustomActions}
+                renderCustomView={renderCustomView}
                 user={{
                     _id: userID,
                     name
@@ -115,6 +141,7 @@ const Chat = ({ route, navigation, db, isConnected }) => {
             />
             {/* stops the keyboard from obstructing view input field as you type */}
             
+            {Platform.OS === 'android' ? <KeyboardAvoidingView behavior="height" /> : null}
             {Platform.OS === 'ios' ? <KeyboardAvoidingView behavior="padding" /> : null}
         </View>
     )

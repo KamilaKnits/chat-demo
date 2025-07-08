@@ -3,6 +3,7 @@ import { StyleSheet, Text, View, } from 'react-native';
 import Start from './components/Start';
 import Chat from './components/Chat';
 
+
 import { useNetInfo } from '@react-native-community/netinfo';
 import { useEffect } from 'react';
 import { Alert } from 'react-native';
@@ -16,6 +17,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 //firebase setup
 import { initializeApp } from 'firebase/app';
 import { getFirestore, disableNetwork, enableNetwork } from 'firebase/firestore';
+import { getStorage } from 'firebase/storage';
 
 //app's main chat component that renders the chat UI
 const Stack = createNativeStackNavigator();
@@ -37,6 +39,9 @@ const App = () => {
   
   //Initialize Cloud Firestore and get a reference to the service
   const db = getFirestore(app);
+
+  //initialize Firebase Storage handler
+  const storage = getStorage(app);
 
   useEffect(() => {
     if (connectionStatus.isConnected === false) {
@@ -62,6 +67,7 @@ const App = () => {
           {props => <Chat
             {...props}
             db={db}
+            storage={storage}
             isConnected={connectionStatus.isConnected}
           />}
         </Stack.Screen>
