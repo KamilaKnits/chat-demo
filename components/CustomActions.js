@@ -58,12 +58,17 @@ const CustomActions = ({ wrapperStyle, iconTextStyle, onSend, storage, userID })
         if (permissions?.granted) {
           const location = await Location.getCurrentPositionAsync({});
           if (location) {
-            onSend({
+            onSend([{
+                _id: Date.now(),
+                createdAt: new Date(),
+                user: {
+                    _id: userID,
+                },
               location: {
                 longitude: location.coords.longitude,
                 latitude: location.coords.latitude,
               },
-            });
+            }]);
           } else Alert.alert("Error occurred while fetching location");
         } else Alert.alert("Permissions haven't been granted.");
       }
@@ -81,7 +86,14 @@ const CustomActions = ({ wrapperStyle, iconTextStyle, onSend, storage, userID })
         const blob = await response.blob();
         uploadBytes(newUploadRef, blob).then(async (snapshot) => {
             const imageURL = await getDownloadURL(snapshot.ref)
-            onSend({ image: imageURL })
+            onSend([{ 
+                _id: Date.now(),
+                createdAt: new Date(),
+                user: {
+                    _id: userID,
+                },
+                image: imageURL 
+            }]);
         });
       }
 
