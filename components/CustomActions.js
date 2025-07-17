@@ -84,16 +84,11 @@ const CustomActions = ({ wrapperStyle, iconTextStyle, onSend, storage, userID })
         const newUploadRef = ref(storage, uniqueRefString);
         const response = await fetch(imageURI);
         const blob = await response.blob();
+       
         uploadBytes(newUploadRef, blob).then(async (snapshot) => {
             const imageURL = await getDownloadURL(snapshot.ref)
-            onSend([{ 
-                _id: Date.now(),
-                createdAt: new Date(),
-                user: {
-                    _id: userID,
-                },
-                image: imageURL 
-            }]);
+            onSend([{ image: imageURL }]);
+            
         });
       }
 

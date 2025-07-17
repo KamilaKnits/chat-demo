@@ -66,16 +66,17 @@ const Chat = ({ route, navigation, db, isConnected, storage }) => {
         }
     }
 
-    const onSend = async (newMessages) => {
-        
-        try {
-            await addDoc(collection(db, "messages"), newMessages[0]);
-        console.log("Message sent to Firestore successfully");
-        } catch (error) {
-            console.error('Error sending message to Firestore', error);
-            //displays error message to the user
-        }  
-    }
+    const onSend = (newMessages = []) => {
+        const message = {
+          ...newMessages[0],
+          createdAt: new Date(),
+          user: {
+            _id: userID,
+            name: name
+          }
+        };
+        addDoc(collection(db, "messages"), message);
+      }
 
     const renderInputToolbar = (props) => {
         if (isConnected === true) 
@@ -99,7 +100,7 @@ const Chat = ({ route, navigation, db, isConnected, storage }) => {
       }
 
       const renderCustomActions = (props) => {
-        return <CustomActions userID={userID} storage={storage} {...props} />;
+        return <CustomActions userID={userID} storage={storage} onSend={onSend} {...props} />;
       };
 
       const renderCustomView = (props) => {
